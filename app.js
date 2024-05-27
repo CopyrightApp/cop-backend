@@ -6,6 +6,10 @@ const connectDB = require('./config/db');
 const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+
+const cors = require('cors');
+
+
 //Load config
 dotenv.config({ path: './config/config.env' });
 
@@ -14,6 +18,7 @@ require('./config/passport')(passport);
 connectDB();
 const app = express();
 
+app.use(cors()); 
 //Middleware (Body Parser) to accept form data.
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -40,9 +45,12 @@ app.use(function (req, res, next) {
 
 //Here we import router from routes/index
 app.use('/auth', require('./routes/auth'));
+app.use('/transcribe', require('./routes/transcribe'))
+//Server launching
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(
   PORT,
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 );

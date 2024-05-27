@@ -36,3 +36,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#Google cloude
+poetic-freedom-424502-m6-3500dddede76.json
