@@ -15,7 +15,11 @@ dotenv.config({ path: './config/config.env' });
 
 //Passport config
 require('./config/passport')(passport);
-connectDB();
+
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+}
+
 const app = express();
 
 app.use(cors()); 
@@ -48,9 +52,14 @@ app.use('/auth', require('./routes/auth'));
 app.use('/transcribe', require('./routes/transcribe'))
 //Server launching
 
-const PORT = process.env.PORT || 4000;
+// Export the app for testing
+module.exports = app;
 
-app.listen(
-  PORT,
-  console.log(`Server running on port ${PORT}`)
-);
+// Server launching (only if not in test environment)
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 4000;
+  app.listen(
+    PORT,
+    console.log(`Server running on port ${PORT}`)
+  );
+}

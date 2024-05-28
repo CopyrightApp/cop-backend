@@ -18,6 +18,11 @@ const speechClient = new speech.SpeechClient({
 });
 
 router.post("/audio", upload.single("audio"), async (req, res) => {
+  // Verificar si el archivo ha sido recibido
+  if (!req.file) {
+    return res.status(400).json({ error: "No se recibió ningún archivo" });
+  }
+
   const filePath = req.file.path;
   const destination = `uploads/${req.file.filename}`;
   await storage.bucket(bucketName).upload(filePath, {
@@ -46,10 +51,6 @@ router.post("/audio", upload.single("audio"), async (req, res) => {
     .map((result) => result.alternatives[0].transcript)
     .join("\n");
   console.log("Soy la transcripción: \n", transcription);
-  // Verificar si el archivo ha sido recibido
-  if (!req.file) {
-    return res.status(400).json({ error: "No se recibió ningún archivo" });
-  }
 
   // Información del archivo recibido
   console.log("Archivo recibido:", req.file);
