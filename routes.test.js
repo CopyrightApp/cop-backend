@@ -23,4 +23,20 @@ describe('Express App', () => {
     });
 });
 
+describe('POST /audio', () => {
+    it('should receive an audio file and return the transcription', async () => {
+        const testAudioPath = path.join(__dirname, 'Soda Stereo En La Ciudad De La Furia Gira Me Verás Volver.mp3');
+        const response = await request(app)
+        .post('/transcribe/audio')
+        .attach('audio', testAudioPath);
 
+        // expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('transcription');
+        console.log(response.body.transcription);
+    }, 420000);
+});
+
+// afterAll(async () => {
+//     // Limpia los archivos temporales si es necesario
+//     await fs.emptyDir(path.join(__dirname, 'uploads'));
+// });
