@@ -50,6 +50,7 @@ app.use(function (req, res, next) {
 //Here we import router from routes/index
 app.use('/auth', require('./routes/auth'));
 app.use('/transcribe', require('./routes/transcribe'))
+app.use('/verify', require('./routes/verify'))
 //Server launching
 
 // Export the app for testing
