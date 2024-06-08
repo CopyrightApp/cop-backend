@@ -51,6 +51,7 @@ app.use(function (req, res, next) {
 app.use('/auth', require('./routes/auth'));
 app.use('/transcribe', require('./routes/transcribe'))
 app.use('/verify', require('./routes/verify'))
+app.use('/chat', require('./routes/chat'))
 //Server launching
 
 // Export the app for testing
