@@ -1,8 +1,9 @@
 ﻿const express = require("express");
+const { Translate } = require('@google-cloud/translate').v2;
 const path = require('path');
 const router = express.Router();
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" }); // Configuración básica de multer
+const upload = multer({ dest: "uploads/" });
 const axios = require('axios');
 const OpenAI = require("openai");
 require("dotenv").config();
@@ -10,9 +11,27 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+const languageMap = {
+  'English': 'en',
+  'Español': 'es',
+  'French': 'fr',
+  'German': 'de',
+  'Chinese': 'zh',
+  'Italian': 'it',
+  'Portuguese': 'pt',
+  'Japanese': 'ja'
+};
+
+// const translate = new Translate({
+//   keyFilename: "poetic-freedom-424502-m6-3500dddede76.json"
+// });
+
 router.post('/check', async (req, res) => {
     const userMessage = req.body.transcription;
     const userMessageWithoutNewlines = '"' + userMessage.replace(/\n/g, '.') + '"';
+
+    const language = req.body.language;
+    const targetLanguage = languageMap[language] || 'es';
 
     //console.log("aaa",userMessageWithoutNewlines)
 
@@ -25,6 +44,8 @@ router.post('/check', async (req, res) => {
 
     //console.log(prompt + userMessageWithoutNewlines + aclaracion + final + final2 + aclaracion2 + conclusion)
 
+    //const translateText = await translate.translate("holaa", targetLanguage);
+    //console.log("ha",translateText);
     try {
         const response = await openai.chat.completions.create({
           model: "gpt-3.5-turbo",
@@ -32,9 +53,10 @@ router.post('/check', async (req, res) => {
             { role: "user", content: prompt + userMessageWithoutNewlines + aclaracion + final + final2 + aclaracion2 + conclusion}
           ]
         });
-        res.status(200).json(response);
+        const data = response.choices[0].message.content;
+        res.status(200).json(data);
       } catch (err) {
-        res.status(500).json("ERROR ", err.message);
+        res.status(500).json(err.message);
     }
 })
 
