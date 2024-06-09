@@ -37,8 +37,8 @@ router.post("/audio", upload.single("audio"), async (req, res) => {
 
   const config = {
     encoding: "MP3",
-    sampleRateHertz: 44100,
-    languageCode: "es-US",
+    sampleRateHertz: 16000,
+    languageCode: "en-US",
   };
 
   const [operation] = await speechClient.longRunningRecognize({
