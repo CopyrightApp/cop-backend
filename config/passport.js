@@ -15,7 +15,6 @@ module.exports = function (passport) {
           googleId: profile.id,
           displayName: profile.displayName,
           firstName: profile.name.givenName,
-          lastName: profile.name.familyName,
           image: profile.photos[0].value,
           authType: "GOOGLE",
         };
