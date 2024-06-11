@@ -25,6 +25,34 @@ function verificarJWT(req, res, next) {
     next();
   });
 }
+
+//@desc Ruta para borrar un elemento del historial
+//@route DELETE /history/:id
+router.delete("/:id", verificarJWT, async (req, res) => {
+  const itemId = req.params.id;
+  if (req.googleId) {
+    const googleId = req.googleId;
+    let history = await History.findOne({ userId: googleId });
+    if (history) {
+      history.values.splice(itemId - 1, 1);
+      await history.save();
+      return res.status(200).json({ history: history.values });
+    }
+    return res.status(400).json({ message: "User history can not be found" });
+  } else if (req.email) {
+    const email = req.email;
+    let history = await History.findOne({ userId: email });
+    if (history) {
+      history.values.splice(itemId - 1, 1);
+      await history.save();
+      return res.status(200).json({ history: history.values });
+    }
+    return res.status(400).json({ message: "User history can not be found" });
+  } else {
+    return res.status(400).json({ message: "JWT can not be resolved" });
+  }
+});
+
 //@desc Ruta para agregar un elemento al historial
 //@route POST /history
 router.post("/", verificarJWT, async (req, res) => {
