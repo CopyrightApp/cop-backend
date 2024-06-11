@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
 // Middleware para encriptar la contraseña antes de guardar el usuario
 UserSchema.pre("save", async function (next) {
   const user = this;
-  if (user.isModified("password") || user.isNew) {
+  if (user.isModified("password") || user.isNew && !user.isModified("googleId")) {
     try {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(user.password, salt);
