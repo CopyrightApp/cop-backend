@@ -3,10 +3,16 @@ const router = express.Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 // @desc Auth with Google
 // @route GET /auth/google
-router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile"],
+    prompt: "select_account",
+  })
+);
 
 // @desc Google auth callback
 // @route GET /auth/google/callback
@@ -17,14 +23,16 @@ router.get(
   }),
   (req, res) => {
     // Generar el token JWT
-    const payload = {
-      user: req.user,
-    };
-    const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
+    const googleId = req.user.googleId;
+    console.log(req.user)
+    const payload = { googleId };
 
+    const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
     // Configurar la cookie con el token
     res.cookie("jwtToken", token, { httpOnly: false, secure: false });
-    res.redirect("http://localhost:3000/checker");
+    res.redirect(
+      `http://localhost:3000/checker?image=${req.user.image}`
+    );
   }
 );
 
@@ -32,7 +40,6 @@ router.get(
 // @route    /auth/signup
 router.post("/signup", async (req, res) => {
   //Para obtener los valores req.body.email, req.body.password
-  console.log("Ha entrado una solicitud ", req.body);
   const newUser = {
     authType: "DEFAULT",
     email: req.body.email,
@@ -41,13 +48,13 @@ router.post("/signup", async (req, res) => {
   try {
     let user = await User.findOne({ email: newUser.email });
     if (user) {
-      console.log("Le respondemos que ya existe");
       return res.status(400).json({ message: "UserExists" });
     } else {
-      console.log("Le respondemos con un JWT");
       user = await User.create(newUser);
       //Se ha creado un nuevo recurso.
-      const token = jwt.sign(newUser, "secreto", { expiresIn: "1h" });
+      const email = newUser.email;
+      const payload = { email };
+      const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
 
       // Configurar la cookie con el token
       res.cookie("jwtToken", token, { httpOnly: false, secure: false });
@@ -73,11 +80,12 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    
-    const token = jwt.sign(req.body, "secreto", { expiresIn: "1h" });
+    const payload = { email };
+    const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
+    console.log("El token que hemos generado es ", token);
 
     res.cookie("jwtToken", token, { httpOnly: false, secure: false });
-    return res.status(200).json({ token }); 
+    return res.status(200).json({ token });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
