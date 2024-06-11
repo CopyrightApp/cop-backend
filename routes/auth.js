@@ -24,15 +24,13 @@ router.get(
   (req, res) => {
     // Generar el token JWT
     const googleId = req.user.googleId;
-    console.log(req.user)
+    console.log(req.user);
     const payload = { googleId };
 
     const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
     // Configurar la cookie con el token
     res.cookie("jwtToken", token, { httpOnly: false, secure: false });
-    res.redirect(
-      `http://localhost:3000/checker?image=${req.user.image}`
-    );
+    res.redirect(`http://localhost:3000/checker?image=${req.user.image}`);
   }
 );
 
@@ -51,8 +49,14 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "UserExists" });
     } else {
       user = await User.create(newUser);
-      //Se ha creado un nuevo recurso.
       const email = newUser.email;
+
+      const newHistory = {
+        userId: email,
+        values: [{ details: "El usuario ha comenzado" }],
+      };
+      history = await History.create(newHistory);
+
       const payload = { email };
       const token = jwt.sign(payload, "secreto", { expiresIn: "1h" });
 
