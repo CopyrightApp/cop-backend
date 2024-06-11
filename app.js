@@ -52,6 +52,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/transcribe', require('./routes/transcribe'))
 app.use('/verify', require('./routes/verify'))
 app.use('/chat', require('./routes/chat'))
+app.use('/feedback', require('./routes/feedback'))
 //Server launching
 
 // Export the app for testing
