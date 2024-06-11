@@ -75,34 +75,4 @@ router.post("/audio", upload.single("audio"), async (req, res) => {
   res.json({ transcription });
 });
 
-// // Función para convertir archivo a FLAC
-// function convertToFLAC(inputPath, outputPath) {
-//   return new Promise((resolve, reject) => {
-//     ffmpeg(inputPath)
-//       .toFormat('flac')
-//       .on('error', (err) => {
-//         console.error('Error durante la conversión a FLAC:', err);
-//         reject(err);
-//       })
-//       .on('end', () => {
-//         console.log('Conversión a FLAC completada.');
-//         resolve();
-//       })
-//       .save(outputPath + '_converted');
-//   });
-// }
-
-// // Función para obtener información de un archivo FLAC
-// function getFLACInfo(filePath) {
-//   return new Promise((resolve, reject) => {
-//     ffmpeg.ffprobe(filePath, (err, metadata) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve(metadata.format);
-//       }
-//     });
-//   });
-// }
-
 module.exports = router;
