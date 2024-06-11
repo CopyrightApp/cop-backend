@@ -7,7 +7,8 @@ const ValueSchema = new mongoose.Schema(
     details: { type: String, required: false },
   },
   { _id: false }
-); // El parámetro _id: false previene la creación automática de un _id para cada subdocumento
+); 
+
 
 // Define el esquema `History`
 const HistorySchema = new mongoose.Schema({
